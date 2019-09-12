@@ -29,6 +29,10 @@ var multipleMemberImport = `
 import { makeStyles, useTheme } from '@material-ui/core/styles';
 `
 
+var invalidMultipleMemberImport = `
+import { amber, green } from '@material-ui/core/colors';
+`
+
 describe('default import transform', () => {
   it('transforms default import', () => {
     const {code} = babel.transform(defaultImport, {plugins: [plugin]});
@@ -52,6 +56,11 @@ describe('default import transform', () => {
 
   it('transforms multiple memberstyle imports when nested', () => {
     const {code} = babel.transform(multipleMemberImport, {plugins: [plugin]});
+    expect(code).toMatchSnapshot();
+  })
+
+  it.only('transforms with special rules for unknown nested subpacke imports', () => {
+    const {code} = babel.transform(invalidMultipleMemberImport, {plugins: [plugin]});
     expect(code).toMatchSnapshot();
   })
 

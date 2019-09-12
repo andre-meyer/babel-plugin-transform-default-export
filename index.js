@@ -6,8 +6,9 @@ const opts = {
     /@material-ui\/icons/g,
     /@material-ui\/styles/g
   ],
-  naivelyTransformMemberImports: false, // unused
-  naivelyTransformNestedImports: false // unused
+  destructureRules: [
+    /@material-ui\/core\/colors/g
+  ]
 }
 
 const barf = (msg) => {
@@ -18,6 +19,8 @@ const getOptionsFromState = (state) => {
   // unused, configs are from this file, sorry :D
   return opts
 }
+
+
 
 module.exports = function() {
   return {
@@ -40,34 +43,49 @@ module.exports = function() {
             (specifier) => specifier.type === 'ImportSpecifier'
           )
 
-        const transforms = []
-        let pkgName
+        const shouldDestructure = opts.destructureRules.some((regex) => (
+          regex.test(source)
+        ));
+
+        const destructureIdentifier = []
+
+        const packageStripRegex = opts.packageMatch.find((regex) => (
+          regex.test(source)
+        ));
+
+        if (!packageStripRegex) return;
+
+        const pkgStripped = source.replace(packageStripRegex, '')
+
+        if (pkgStripped.length == 0) {
+          // Imported the package at the root
+          //    import Something from 'package-name'
+          return
+        }
+
+        pkgName = source.replace(pkgStripped, '');
+        // Imported the nested package, strip the slash to get the qualified name
+        const importName = pkgStripped.substring(1)
+
+        let transforms = []
         memberImports.forEach((memberImport, index) => {
-          const packageStripRegex = opts.packageMatch.find((regex) => (
-            regex.test(source)
-          ));
-
-          if (!packageStripRegex) return;
-
-          const pkgStripped = source.replace(packageStripRegex, '')
-
-          if (pkgStripped.length == 0) {
-            // Imported the package at the root
-            //    import Something from 'package-name'
-            return
-          }
-
-          pkgName = source.replace(pkgStripped, '');
-
-          // Imported the nested package, strip the slash to get the qualified name
-          // const importName = pkgStripped.substring(1) // subpackage
-          
-          transforms.push(
-            types.importSpecifier(
-              types.identifier(memberImport.local.name), // import { THIS } 
-              types.identifier(memberImport.local.name),// import { OTHER as THIS }
+          if (shouldDestructure) {
+            transforms = [
+              types.importDefaultSpecifier(
+                types.identifier(importName), // import subPackageName from '@my/package';
+              )
+            ]
+            destructureIdentifier.push(
+              types.identifier(memberImport.local.name)
             )
-          )
+          } else {
+            transforms.push(
+              types.importSpecifier(
+                types.identifier(memberImport.local.name), // import { THIS } 
+                types.identifier(memberImport.local.name),// import { OTHER as THIS }
+              )
+            )
+          }
         })
 
         if (transforms.length > 0) {
@@ -77,39 +95,30 @@ module.exports = function() {
               types.stringLiteral(pkgName)
             )
           )
+          destructureIdentifier.reverse().forEach((identifier) => {
+            path.insertAfter(
+              types.variableDeclaration("const",
+                [
+                  types.variableDeclarator(
+                    identifier, 
+                    types.memberExpression(
+                      types.identifier(importName),
+                      identifier
+                    )
+                  )
+                ] 
+              )
+            )
+          })
         }
 
         defaultImports.forEach((defaultImport, index) => {
-          const packageStripRegex = opts.packageMatch.find((regex) => (
-            regex.test(source)
-          ));
-
-          if (!packageStripRegex) return;
-
-          const pkgStripped = source.replace(packageStripRegex, '')
-
-          if (pkgStripped.length == 0) {
-            // Imported the package at the root
-            //    import Something from 'package-name'
-            return
-          }
-
-          const pkgName = source.replace(pkgStripped, '');
-
-          // Imported the nested package, strip the slash to get the qualified name
-          const importName = pkgStripped.substring(1)
-
           if (importName.indexOf("/") > -1) {
             // Imported deeply nested package, doesn't work
             //    import Something from 'package-name/Deep/Something'
-            barf("Can not transform imports nested more than 1 layer: " + source);
+            barf("Can not transform default imports nested more than 1 layer: " + source);
           }
 
-          /*console.log(`
-          import {
-            ${defaultImport.local.name} as ${importName}
-          } from '${pkgName}'
-          `)*/
           path.replaceWith(
             types.importDeclaration(
               [types.importSpecifier(types.identifier(defaultImport.local.name), types.identifier(importName))],
