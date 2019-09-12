@@ -40,6 +40,8 @@ module.exports = function() {
             (specifier) => specifier.type === 'ImportSpecifier'
           )
 
+        const transforms = []
+        let pkgName
         memberImports.forEach((memberImport, index) => {
           const packageStripRegex = opts.packageMatch.find((regex) => (
             regex.test(source)
@@ -55,23 +57,27 @@ module.exports = function() {
             return
           }
 
-          const pkgName = source.replace(pkgStripped, '');
+          pkgName = source.replace(pkgStripped, '');
 
           // Imported the nested package, strip the slash to get the qualified name
           // const importName = pkgStripped.substring(1) // subpackage
           
-          path.replaceWith(
-            types.importDeclaration(
-              [
-                types.importSpecifier(
-                  types.identifier(memberImport.local.name), // import { THIS } 
-                  types.identifier(memberImport.local.name),// import { OTHER as THIS }
-                )
-              ],
-              types.stringLiteral(pkgName)
+          transforms.push(
+            types.importSpecifier(
+              types.identifier(memberImport.local.name), // import { THIS } 
+              types.identifier(memberImport.local.name),// import { OTHER as THIS }
             )
           )
         })
+
+        if (transforms.length > 0) {
+          path.replaceWith(
+            types.importDeclaration(
+              transforms,
+              types.stringLiteral(pkgName)
+            )
+          )
+        }
 
         defaultImports.forEach((defaultImport, index) => {
           const packageStripRegex = opts.packageMatch.find((regex) => (

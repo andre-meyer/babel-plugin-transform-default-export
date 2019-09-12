@@ -25,6 +25,10 @@ var kindaDefaultMemberImport = `
 import { makeStyles } from '@material-ui/core/styles';
 `;
 
+var multipleMemberImport = `
+import { makeStyles, useTheme } from '@material-ui/core/styles';
+`
+
 describe('default import transform', () => {
   it('transforms default import', () => {
     const {code} = babel.transform(defaultImport, {plugins: [plugin]});
@@ -43,6 +47,11 @@ describe('default import transform', () => {
 
   it('transforms memberstyle imports when nested', () => {
     const {code} = babel.transform(kindaDefaultMemberImport, {plugins: [plugin]});
+    expect(code).toMatchSnapshot();
+  })
+
+  it('transforms multiple memberstyle imports when nested', () => {
+    const {code} = babel.transform(multipleMemberImport, {plugins: [plugin]});
     expect(code).toMatchSnapshot();
   })
 
