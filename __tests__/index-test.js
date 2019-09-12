@@ -59,7 +59,7 @@ describe('default import transform', () => {
     expect(code).toMatchSnapshot();
   })
 
-  it.only('transforms with special rules for unknown nested subpacke imports', () => {
+  it('transforms with special rules for unknown nested subpacke imports', () => {
     const {code} = babel.transform(invalidMultipleMemberImport, {plugins: [plugin]});
     expect(code).toMatchSnapshot();
   })
