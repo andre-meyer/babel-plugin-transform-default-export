@@ -1,14 +1,20 @@
 {
   "name": "babel-plugin-transform-default-export",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "",
   "main": "index.js",
   "scripts": {
     "test": "jest"
   },
-  "keywords": [],
-  "author": "ampere.cloud",
-  "license": "ISC",
+  "keywords": [
+    "babel", "transform", "plugin", "default import", "member import"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://github.com/andre-meyer/babel-plugin-transform-default-export.git"
+  },
+  "author": "Andre Meyer",
+  "license": "MIT",
   "dependencies": {
     "@babel/types": "^7.4",
     "is-valid-path": "^0.1.1"

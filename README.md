@@ -24,6 +24,9 @@ import { ADifferentName as Something } from '@material-ui/core';
 I developed this project to use `@material-ui/core` as an external dependency in a project that used AMD, because without this plugin, it would create many dependencies that would require `@material-ui/core/Box`, `@material-ui/core/Modal`, etc.
 There were webpack configurations that make this possible, but not for AMD libraries.
 
+### Tests
+run `npm t` to see it validate against the snapshots in `__tests__/__snapshots__/`
+
 ### Notes
 
 Too lazy to put this on npm. Good luck.
