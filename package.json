@@ -1,0 +1,23 @@
+{
+  "name": "babel-plugin-transform-default-export",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [],
+  "author": "ampere.cloud",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/types": "^7.4",
+    "is-valid-path": "^0.1.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4",
+    "@babel/preset-env": "^7.4",
+    "@babel/register": "^7.4.4",
+    "jest": "^24.9.0",
+    "mocha": "^6.1"
+  }
+}

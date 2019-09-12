@@ -1,0 +1,19 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`default import transform does not transform member import 1`] = `
+"
+import { Box } from '@material-ui/core';"
+`;
+
+exports[`default import transform transform altering names from default import 1`] = `"import { NotTheName as Renamed } from '@material-ui/styles';"`;
+
+exports[`default import transform transforms default import 1`] = `"import { Box } from '@material-ui/core';"`;
+
+exports[`default import transform transforms many default imports 1`] = `
+"import { Box } from '@material-ui/core';
+import { SvgIcon } from '@material-ui/core';
+import { Modal } from '@material-ui/core';
+import { RouterIcon } from '@material-ui/icons';"
+`;
+
+exports[`default import transform transforms memberstyle imports when nested 1`] = `"import { makeStyles } from '@material-ui/core';"`;
