@@ -71,8 +71,9 @@ module.exports = function() {
         memberImports.forEach((memberImport, index) => {
           if (shouldDestructure) {
             transforms = [
-              types.importDefaultSpecifier(
-                types.identifier(importName), // import subPackageName from '@my/package';
+              types.importSpecifier(
+                types.identifier(importName), // import { subPackageName } from '@my/package';
+                types.identifier(importName),
               )
             ]
             destructureIdentifier.push(

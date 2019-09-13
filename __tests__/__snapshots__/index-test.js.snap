@@ -21,7 +21,7 @@ exports[`default import transform transforms memberstyle imports when nested 1`]
 exports[`default import transform transforms multiple memberstyle imports when nested 1`] = `"import { makeStyles, useTheme } from '@material-ui/core';"`;
 
 exports[`default import transform transforms with special rules for unknown nested subpacke imports 1`] = `
-"import colors from '@material-ui/core';
+"import { colors } from '@material-ui/core';
 const amber = colors.amber;
 const green = colors.green;"
 `;
