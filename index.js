@@ -4,7 +4,8 @@ const opts = {
   packageMatch: [
     /@material-ui\/core/g,
     /@material-ui\/icons/g,
-    /@material-ui\/styles/g
+    /@material-ui\/styles/g,
+    /@material-ui\/lab/g
   ],
   destructureRules: [
     /@material-ui\/core\/colors/g
